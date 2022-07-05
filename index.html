@@ -1,0 +1,1162 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="data/World_2.js"></script>
+        <script src="data/LDNTSP_main_3.js"></script>
+        <script src="data/CARICOM_4.js"></script>
+        <script src="data/SIDS_5.js"></script>
+        <script src="data/ZAMBEZI_6.js"></script>
+        <script src="data/3S_7.js"></script>
+        <script src="data/SAHEL_8.js"></script>
+        <script src="data/GGW_9.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+            highlightLayer.openPopup();
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[-103.50543770547807,-190.30403220401948],[114.20695167505289,187.69596779598052]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_GoogleHybrid_0');
+        map.getPane('pane_GoogleHybrid_0').style.zIndex = 400;
+        var layer_GoogleHybrid_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleHybrid_0',
+            opacity: 1.0,
+            attribution: '<a href="https://www.google.at/permissions/geoguidelines/attr-guide.html">Map data ©2015 Google</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 20
+        });
+        layer_GoogleHybrid_0;
+        map.addLayer(layer_GoogleHybrid_0);
+        map.createPane('pane_OSMStandard_1');
+        map.getPane('pane_OSMStandard_1').style.zIndex = 401;
+        var layer_OSMStandard_1 = L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            pane: 'pane_OSMStandard_1',
+            opacity: 1.0,
+            attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors, CC-BY-SA</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_OSMStandard_1;
+        map.addLayer(layer_OSMStandard_1);
+        function pop_World_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Country_Name</th>\
+                        <td>' + (feature.properties['Country_Name'] !== null ? autolinker.link(feature.properties['Country_Name'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">UNCCD_Region</th>\
+                        <td>' + (feature.properties['UNCCD_Region'] !== null ? autolinker.link(feature.properties['UNCCD_Region'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Leverage plan</th>\
+                        <td>' + (feature.properties['Leverage plan'] !== null ? autolinker.link(feature.properties['Leverage plan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Senior government international partners</th>\
+                        <td>' + (feature.properties['Senior government international partners'] !== null ? autolinker.link(feature.properties['Senior government international partners'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Working Group</th>\
+                        <td>' + (feature.properties['Working Group'] !== null ? autolinker.link(feature.properties['Working Group'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Baseline</th>\
+                        <td>' + (feature.properties['Baseline'] !== null ? autolinker.link(feature.properties['Baseline'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Trend and Drivers</th>\
+                        <td>' + (feature.properties['Trend and Drivers'] !== null ? autolinker.link(feature.properties['Trend and Drivers'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Legal and institutional environment'] !== null ? autolinker.link(feature.properties['Legal and institutional environment'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Targets</th>\
+                        <td>' + (feature.properties['Targets'] !== null ? autolinker.link(feature.properties['Targets'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Measures</th>\
+                        <td>' + (feature.properties['Measures'] !== null ? autolinker.link(feature.properties['Measures'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">High level note</th>\
+                        <td>' + (feature.properties['High level note'] !== null ? autolinker.link(feature.properties['High level note'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">LDN included policies</th>\
+                        <td>' + (feature.properties['LDN included policies'] !== null ? autolinker.link(feature.properties['LDN included policies'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Final report</th>\
+                        <td>' + (feature.properties['Final report'] !== null ? autolinker.link(feature.properties['Final report'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Higl level note online</th>\
+                        <td>' + (feature.properties['Higl level note online'] !== null ? autolinker.link(feature.properties['Higl level note online'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Final report online</th>\
+                        <td>' + (feature.properties['Final report online'] !== null ? autolinker.link(feature.properties['Final report online'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Status of LDN target setting process</th>\
+                        <td>' + (feature.properties['Status of LDN target setting process'] !== null ? autolinker.link(feature.properties['Status of LDN target setting process'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_World_2_0() {
+            return {
+                pane: 'pane_World_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(241,244,233,1.0)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_World_2');
+        map.getPane('pane_World_2').style.zIndex = 402;
+        map.getPane('pane_World_2').style['mix-blend-mode'] = 'normal';
+        var layer_World_2 = new L.geoJson(json_World_2, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_World_2',
+            layerName: 'layer_World_2',
+            pane: 'pane_World_2',
+            onEachFeature: pop_World_2,
+            style: style_World_2_0,
+        });
+        bounds_group.addLayer(layer_World_2);
+        map.addLayer(layer_World_2);
+        function pop_LDNTSP_main_3(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Country_Name</th>\
+                        <td>' + (feature.properties['Country_Name'] !== null ? autolinker.link(feature.properties['Country_Name'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">UNCCD_Region</th>\
+                        <td>' + (feature.properties['UNCCD_Region'] !== null ? autolinker.link(feature.properties['UNCCD_Region'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Leverage plan</th>\
+                        <td>' + (feature.properties['Leverage plan'] !== null ? autolinker.link(feature.properties['Leverage plan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Working Group</th>\
+                        <td>' + (feature.properties['Working Group'] !== null ? autolinker.link(feature.properties['Working Group'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Baseline</th>\
+                        <td>' + (feature.properties['Baseline'] !== null ? autolinker.link(feature.properties['Baseline'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Targets</th>\
+                        <td>' + (feature.properties['Targets'] !== null ? autolinker.link(feature.properties['Targets'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Measures</th>\
+                        <td>' + (feature.properties['Measures'] !== null ? autolinker.link(feature.properties['Measures'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">High level note</th>\
+                        <td>' + (feature.properties['High level note'] !== null ? autolinker.link(feature.properties['High level note'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">LDN included policies</th>\
+                        <td>' + (feature.properties['LDN included policies'] !== null ? autolinker.link(feature.properties['LDN included policies'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Final report</th>\
+                        <td>' + (feature.properties['Final report'] !== null ? autolinker.link(feature.properties['Final report'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Status of LDN target setting process</th>\
+                        <td>' + (feature.properties['Status of LDN target setting process'] !== null ? autolinker.link(feature.properties['Status of LDN target setting process'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_LDNTSP_main_3_0(feature) {
+            switch(String(feature.properties['Status of LDN target setting process'])) {
+                case 'completed':
+                    return {
+                pane: 'pane_LDNTSP_main_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(102,200,19,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'in progress':
+                    return {
+                pane: 'pane_LDNTSP_main_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(57,179,210,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'not started':
+                    return {
+                pane: 'pane_LDNTSP_main_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(220,110,67,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'unfinished':
+                    return {
+                pane: 'pane_LDNTSP_main_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(150,133,133,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_LDNTSP_main_3');
+        map.getPane('pane_LDNTSP_main_3').style.zIndex = 403;
+        map.getPane('pane_LDNTSP_main_3').style['mix-blend-mode'] = 'normal';
+        var layer_LDNTSP_main_3 = new L.geoJson(json_LDNTSP_main_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_LDNTSP_main_3',
+            layerName: 'layer_LDNTSP_main_3',
+            pane: 'pane_LDNTSP_main_3',
+            onEachFeature: pop_LDNTSP_main_3,
+            style: style_LDNTSP_main_3_0,
+        });
+        bounds_group.addLayer(layer_LDNTSP_main_3);
+        map.addLayer(layer_LDNTSP_main_3);
+        function pop_CARICOM_4(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(feature.properties['OBJECTID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CNTRY_NAME'] !== null ? autolinker.link(feature.properties['CNTRY_NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LDN_TSP'] !== null ? autolinker.link(feature.properties['LDN_TSP'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['REGION'] !== null ? autolinker.link(feature.properties['REGION'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TSP_Status'] !== null ? autolinker.link(feature.properties['TSP_Status'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Targets'] !== null ? autolinker.link(feature.properties['Targets'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['HLN'] !== null ? autolinker.link(feature.properties['HLN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FR'] !== null ? autolinker.link(feature.properties['FR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['GGW'] !== null ? autolinker.link(feature.properties['GGW'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CILSS'] !== null ? autolinker.link(feature.properties['CILSS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Caricom'] !== null ? autolinker.link(feature.properties['Caricom'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DroughtI'] !== null ? autolinker.link(feature.properties['DroughtI'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LDNtppSIDS'] !== null ? autolinker.link(feature.properties['LDNtppSIDS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LDNtpp_Afr'] !== null ? autolinker.link(feature.properties['LDNtpp_Afr'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['3S_Initave'] !== null ? autolinker.link(feature.properties['3S_Initave'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FC'] !== null ? autolinker.link(feature.properties['FC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FC_Legend'] !== null ? autolinker.link(feature.properties['FC_Legend'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LDN_TPP_REG'] !== null ? autolinker.link(feature.properties['LDN_TPP_REG'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TPP_REG_join'] !== null ? autolinker.link(feature.properties['TPP_REG_join'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['testid'] !== null ? autolinker.link(feature.properties['testid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_Region'] !== null ? autolinker.link(feature.properties['tsp_testid_Region'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_GGW'] !== null ? autolinker.link(feature.properties['tsp_testid_GGW'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_Sahel'] !== null ? autolinker.link(feature.properties['tsp_testid_Sahel'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_3S'] !== null ? autolinker.link(feature.properties['tsp_testid_3S'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_Zambezi'] !== null ? autolinker.link(feature.properties['tsp_testid_Zambezi'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_SIDS'] !== null ? autolinker.link(feature.properties['tsp_testid_SIDS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_CARICOM'] !== null ? autolinker.link(feature.properties['tsp_testid_CARICOM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_CARICOM_4_0() {
+            return {
+                pane: 'pane_CARICOM_4',
+                opacity: 1,
+                color: 'rgba(114,26,191,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 0,
+                interactive: false,
+            }
+        }
+        map.createPane('pane_CARICOM_4');
+        map.getPane('pane_CARICOM_4').style.zIndex = 404;
+        map.getPane('pane_CARICOM_4').style['mix-blend-mode'] = 'normal';
+        var layer_CARICOM_4 = new L.geoJson(json_CARICOM_4, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_CARICOM_4',
+            layerName: 'layer_CARICOM_4',
+            pane: 'pane_CARICOM_4',
+            onEachFeature: pop_CARICOM_4,
+            style: style_CARICOM_4_0,
+        });
+        bounds_group.addLayer(layer_CARICOM_4);
+        map.addLayer(layer_CARICOM_4);
+        function pop_SIDS_5(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(feature.properties['OBJECTID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CNTRY_NAME'] !== null ? autolinker.link(feature.properties['CNTRY_NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LDN_TSP'] !== null ? autolinker.link(feature.properties['LDN_TSP'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['REGION'] !== null ? autolinker.link(feature.properties['REGION'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TSP_Status'] !== null ? autolinker.link(feature.properties['TSP_Status'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Targets'] !== null ? autolinker.link(feature.properties['Targets'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['HLN'] !== null ? autolinker.link(feature.properties['HLN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FR'] !== null ? autolinker.link(feature.properties['FR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['GGW'] !== null ? autolinker.link(feature.properties['GGW'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CILSS'] !== null ? autolinker.link(feature.properties['CILSS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Caricom'] !== null ? autolinker.link(feature.properties['Caricom'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DroughtI'] !== null ? autolinker.link(feature.properties['DroughtI'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LDNtppSIDS'] !== null ? autolinker.link(feature.properties['LDNtppSIDS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LDNtpp_Afr'] !== null ? autolinker.link(feature.properties['LDNtpp_Afr'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['3S_Initave'] !== null ? autolinker.link(feature.properties['3S_Initave'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FC'] !== null ? autolinker.link(feature.properties['FC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FC_Legend'] !== null ? autolinker.link(feature.properties['FC_Legend'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LDN_TPP_REG'] !== null ? autolinker.link(feature.properties['LDN_TPP_REG'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TPP_REG_join'] !== null ? autolinker.link(feature.properties['TPP_REG_join'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['testid'] !== null ? autolinker.link(feature.properties['testid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_Region'] !== null ? autolinker.link(feature.properties['tsp_testid_Region'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_GGW'] !== null ? autolinker.link(feature.properties['tsp_testid_GGW'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_Sahel'] !== null ? autolinker.link(feature.properties['tsp_testid_Sahel'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_3S'] !== null ? autolinker.link(feature.properties['tsp_testid_3S'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_Zambezi'] !== null ? autolinker.link(feature.properties['tsp_testid_Zambezi'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_SIDS'] !== null ? autolinker.link(feature.properties['tsp_testid_SIDS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_CARICOM'] !== null ? autolinker.link(feature.properties['tsp_testid_CARICOM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_SIDS_5_0() {
+            return {
+                pane: 'pane_SIDS_5',
+                opacity: 1,
+                color: 'rgba(6,223,184,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 0,
+                interactive: false,
+            }
+        }
+        map.createPane('pane_SIDS_5');
+        map.getPane('pane_SIDS_5').style.zIndex = 405;
+        map.getPane('pane_SIDS_5').style['mix-blend-mode'] = 'normal';
+        var layer_SIDS_5 = new L.geoJson(json_SIDS_5, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_SIDS_5',
+            layerName: 'layer_SIDS_5',
+            pane: 'pane_SIDS_5',
+            onEachFeature: pop_SIDS_5,
+            style: style_SIDS_5_0,
+        });
+        bounds_group.addLayer(layer_SIDS_5);
+        map.addLayer(layer_SIDS_5);
+        function pop_ZAMBEZI_6(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(feature.properties['OBJECTID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CNTRY_NAME'] !== null ? autolinker.link(feature.properties['CNTRY_NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LDN_TSP'] !== null ? autolinker.link(feature.properties['LDN_TSP'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['REGION'] !== null ? autolinker.link(feature.properties['REGION'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TSP_Status'] !== null ? autolinker.link(feature.properties['TSP_Status'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Targets'] !== null ? autolinker.link(feature.properties['Targets'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['HLN'] !== null ? autolinker.link(feature.properties['HLN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FR'] !== null ? autolinker.link(feature.properties['FR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['GGW'] !== null ? autolinker.link(feature.properties['GGW'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CILSS'] !== null ? autolinker.link(feature.properties['CILSS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Caricom'] !== null ? autolinker.link(feature.properties['Caricom'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DroughtI'] !== null ? autolinker.link(feature.properties['DroughtI'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LDNtppSIDS'] !== null ? autolinker.link(feature.properties['LDNtppSIDS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LDNtpp_Afr'] !== null ? autolinker.link(feature.properties['LDNtpp_Afr'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['3S_Initave'] !== null ? autolinker.link(feature.properties['3S_Initave'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FC'] !== null ? autolinker.link(feature.properties['FC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FC_Legend'] !== null ? autolinker.link(feature.properties['FC_Legend'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LDN_TPP_REG'] !== null ? autolinker.link(feature.properties['LDN_TPP_REG'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TPP_REG_join'] !== null ? autolinker.link(feature.properties['TPP_REG_join'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['testid'] !== null ? autolinker.link(feature.properties['testid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_Region'] !== null ? autolinker.link(feature.properties['tsp_testid_Region'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_GGW'] !== null ? autolinker.link(feature.properties['tsp_testid_GGW'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_Sahel'] !== null ? autolinker.link(feature.properties['tsp_testid_Sahel'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_3S'] !== null ? autolinker.link(feature.properties['tsp_testid_3S'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_Zambezi'] !== null ? autolinker.link(feature.properties['tsp_testid_Zambezi'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_SIDS'] !== null ? autolinker.link(feature.properties['tsp_testid_SIDS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_CARICOM'] !== null ? autolinker.link(feature.properties['tsp_testid_CARICOM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_ZAMBEZI_6_0() {
+            return {
+                pane: 'pane_ZAMBEZI_6',
+                opacity: 1,
+                color: 'rgba(35,120,194,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 0,
+                interactive: false,
+            }
+        }
+        map.createPane('pane_ZAMBEZI_6');
+        map.getPane('pane_ZAMBEZI_6').style.zIndex = 406;
+        map.getPane('pane_ZAMBEZI_6').style['mix-blend-mode'] = 'normal';
+        var layer_ZAMBEZI_6 = new L.geoJson(json_ZAMBEZI_6, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_ZAMBEZI_6',
+            layerName: 'layer_ZAMBEZI_6',
+            pane: 'pane_ZAMBEZI_6',
+            onEachFeature: pop_ZAMBEZI_6,
+            style: style_ZAMBEZI_6_0,
+        });
+        bounds_group.addLayer(layer_ZAMBEZI_6);
+        map.addLayer(layer_ZAMBEZI_6);
+        function pop_3S_7(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(feature.properties['OBJECTID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CNTRY_NAME'] !== null ? autolinker.link(feature.properties['CNTRY_NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LDN_TSP'] !== null ? autolinker.link(feature.properties['LDN_TSP'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['REGION'] !== null ? autolinker.link(feature.properties['REGION'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TSP_Status'] !== null ? autolinker.link(feature.properties['TSP_Status'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Targets'] !== null ? autolinker.link(feature.properties['Targets'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['HLN'] !== null ? autolinker.link(feature.properties['HLN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FR'] !== null ? autolinker.link(feature.properties['FR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['GGW'] !== null ? autolinker.link(feature.properties['GGW'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CILSS'] !== null ? autolinker.link(feature.properties['CILSS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Caricom'] !== null ? autolinker.link(feature.properties['Caricom'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DroughtI'] !== null ? autolinker.link(feature.properties['DroughtI'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LDNtppSIDS'] !== null ? autolinker.link(feature.properties['LDNtppSIDS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LDNtpp_Afr'] !== null ? autolinker.link(feature.properties['LDNtpp_Afr'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['3S_Initave'] !== null ? autolinker.link(feature.properties['3S_Initave'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FC'] !== null ? autolinker.link(feature.properties['FC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FC_Legend'] !== null ? autolinker.link(feature.properties['FC_Legend'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LDN_TPP_REG'] !== null ? autolinker.link(feature.properties['LDN_TPP_REG'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TPP_REG_join'] !== null ? autolinker.link(feature.properties['TPP_REG_join'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['testid'] !== null ? autolinker.link(feature.properties['testid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_Region'] !== null ? autolinker.link(feature.properties['tsp_testid_Region'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_GGW'] !== null ? autolinker.link(feature.properties['tsp_testid_GGW'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_Sahel'] !== null ? autolinker.link(feature.properties['tsp_testid_Sahel'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_3S'] !== null ? autolinker.link(feature.properties['tsp_testid_3S'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_Zambezi'] !== null ? autolinker.link(feature.properties['tsp_testid_Zambezi'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_SIDS'] !== null ? autolinker.link(feature.properties['tsp_testid_SIDS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_CARICOM'] !== null ? autolinker.link(feature.properties['tsp_testid_CARICOM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_3S_7_0() {
+            return {
+                pane: 'pane_3S_7',
+                opacity: 1,
+                color: 'rgba(239,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 0,
+                interactive: false,
+            }
+        }
+        map.createPane('pane_3S_7');
+        map.getPane('pane_3S_7').style.zIndex = 407;
+        map.getPane('pane_3S_7').style['mix-blend-mode'] = 'normal';
+        var layer_3S_7 = new L.geoJson(json_3S_7, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_3S_7',
+            layerName: 'layer_3S_7',
+            pane: 'pane_3S_7',
+            onEachFeature: pop_3S_7,
+            style: style_3S_7_0,
+        });
+        bounds_group.addLayer(layer_3S_7);
+        map.addLayer(layer_3S_7);
+        function pop_SAHEL_8(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(feature.properties['OBJECTID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CNTRY_NAME'] !== null ? autolinker.link(feature.properties['CNTRY_NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LDN_TSP'] !== null ? autolinker.link(feature.properties['LDN_TSP'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['REGION'] !== null ? autolinker.link(feature.properties['REGION'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TSP_Status'] !== null ? autolinker.link(feature.properties['TSP_Status'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Targets'] !== null ? autolinker.link(feature.properties['Targets'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['HLN'] !== null ? autolinker.link(feature.properties['HLN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FR'] !== null ? autolinker.link(feature.properties['FR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['GGW'] !== null ? autolinker.link(feature.properties['GGW'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CILSS'] !== null ? autolinker.link(feature.properties['CILSS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Caricom'] !== null ? autolinker.link(feature.properties['Caricom'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DroughtI'] !== null ? autolinker.link(feature.properties['DroughtI'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LDNtppSIDS'] !== null ? autolinker.link(feature.properties['LDNtppSIDS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LDNtpp_Afr'] !== null ? autolinker.link(feature.properties['LDNtpp_Afr'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['3S_Initave'] !== null ? autolinker.link(feature.properties['3S_Initave'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FC'] !== null ? autolinker.link(feature.properties['FC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FC_Legend'] !== null ? autolinker.link(feature.properties['FC_Legend'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LDN_TPP_REG'] !== null ? autolinker.link(feature.properties['LDN_TPP_REG'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TPP_REG_join'] !== null ? autolinker.link(feature.properties['TPP_REG_join'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['testid'] !== null ? autolinker.link(feature.properties['testid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_Region'] !== null ? autolinker.link(feature.properties['tsp_testid_Region'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_GGW'] !== null ? autolinker.link(feature.properties['tsp_testid_GGW'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_Sahel'] !== null ? autolinker.link(feature.properties['tsp_testid_Sahel'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_3S'] !== null ? autolinker.link(feature.properties['tsp_testid_3S'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_Zambezi'] !== null ? autolinker.link(feature.properties['tsp_testid_Zambezi'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_SIDS'] !== null ? autolinker.link(feature.properties['tsp_testid_SIDS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_CARICOM'] !== null ? autolinker.link(feature.properties['tsp_testid_CARICOM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_SAHEL_8_0() {
+            return {
+                pane: 'pane_SAHEL_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 0,
+                interactive: false,
+            }
+        }
+        map.createPane('pane_SAHEL_8');
+        map.getPane('pane_SAHEL_8').style.zIndex = 408;
+        map.getPane('pane_SAHEL_8').style['mix-blend-mode'] = 'normal';
+        var layer_SAHEL_8 = new L.geoJson(json_SAHEL_8, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_SAHEL_8',
+            layerName: 'layer_SAHEL_8',
+            pane: 'pane_SAHEL_8',
+            onEachFeature: pop_SAHEL_8,
+            style: style_SAHEL_8_0,
+        });
+        bounds_group.addLayer(layer_SAHEL_8);
+        map.addLayer(layer_SAHEL_8);
+        function pop_GGW_9(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(feature.properties['OBJECTID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CNTRY_NAME'] !== null ? autolinker.link(feature.properties['CNTRY_NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LDN_TSP'] !== null ? autolinker.link(feature.properties['LDN_TSP'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['REGION'] !== null ? autolinker.link(feature.properties['REGION'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TSP_Status'] !== null ? autolinker.link(feature.properties['TSP_Status'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Targets'] !== null ? autolinker.link(feature.properties['Targets'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['HLN'] !== null ? autolinker.link(feature.properties['HLN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FR'] !== null ? autolinker.link(feature.properties['FR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['GGW'] !== null ? autolinker.link(feature.properties['GGW'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CILSS'] !== null ? autolinker.link(feature.properties['CILSS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Caricom'] !== null ? autolinker.link(feature.properties['Caricom'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DroughtI'] !== null ? autolinker.link(feature.properties['DroughtI'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LDNtppSIDS'] !== null ? autolinker.link(feature.properties['LDNtppSIDS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LDNtpp_Afr'] !== null ? autolinker.link(feature.properties['LDNtpp_Afr'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['3S_Initave'] !== null ? autolinker.link(feature.properties['3S_Initave'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FC'] !== null ? autolinker.link(feature.properties['FC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FC_Legend'] !== null ? autolinker.link(feature.properties['FC_Legend'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['LDN_TPP_REG'] !== null ? autolinker.link(feature.properties['LDN_TPP_REG'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TPP_REG_join'] !== null ? autolinker.link(feature.properties['TPP_REG_join'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['testid'] !== null ? autolinker.link(feature.properties['testid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_Region'] !== null ? autolinker.link(feature.properties['tsp_testid_Region'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_GGW'] !== null ? autolinker.link(feature.properties['tsp_testid_GGW'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_Sahel'] !== null ? autolinker.link(feature.properties['tsp_testid_Sahel'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_3S'] !== null ? autolinker.link(feature.properties['tsp_testid_3S'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_Zambezi'] !== null ? autolinker.link(feature.properties['tsp_testid_Zambezi'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_SIDS'] !== null ? autolinker.link(feature.properties['tsp_testid_SIDS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tsp_testid_CARICOM'] !== null ? autolinker.link(feature.properties['tsp_testid_CARICOM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_GGW_9_0() {
+            return {
+                pane: 'pane_GGW_9',
+                opacity: 1,
+                color: 'rgba(35,159,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 0,
+                interactive: false,
+            }
+        }
+        map.createPane('pane_GGW_9');
+        map.getPane('pane_GGW_9').style.zIndex = 409;
+        map.getPane('pane_GGW_9').style['mix-blend-mode'] = 'normal';
+        var layer_GGW_9 = new L.geoJson(json_GGW_9, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_GGW_9',
+            layerName: 'layer_GGW_9',
+            pane: 'pane_GGW_9',
+            onEachFeature: pop_GGW_9,
+            style: style_GGW_9_0,
+        });
+        bounds_group.addLayer(layer_GGW_9);
+        map.addLayer(layer_GGW_9);
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'<img src="legend/GGW_9.png" /> GGW': layer_GGW_9,'<img src="legend/SAHEL_8.png" /> SAHEL': layer_SAHEL_8,'<img src="legend/3S_7.png" /> 3S': layer_3S_7,'<img src="legend/ZAMBEZI_6.png" /> ZAMBEZI': layer_ZAMBEZI_6,'<img src="legend/SIDS_5.png" /> SIDS': layer_SIDS_5,'<img src="legend/CARICOM_4.png" /> CARICOM': layer_CARICOM_4,'LDNTSP_main<br /><table><tr><td style="text-align: center;"><img src="legend/LDNTSP_main_3_completed0.png" /></td><td>completed</td></tr><tr><td style="text-align: center;"><img src="legend/LDNTSP_main_3_inprogress1.png" /></td><td>in progress</td></tr><tr><td style="text-align: center;"><img src="legend/LDNTSP_main_3_notstarted2.png" /></td><td>not started</td></tr><tr><td style="text-align: center;"><img src="legend/LDNTSP_main_3_unfinished3.png" /></td><td>unfinished</td></tr></table>': layer_LDNTSP_main_3,'<img src="legend/World_2.png" /> World': layer_World_2,"OSM Standard": layer_OSMStandard_1,"Google Hybrid": layer_GoogleHybrid_0,},{collapsed:false}).addTo(map);
+        setBounds();
+        resetLabels([layer_World_2]);
+        map.on("zoomend", function(){
+            resetLabels([layer_World_2]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_World_2]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_World_2]);
+        });
+        </script>
+    </body>
+</html>
